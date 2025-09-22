@@ -17,7 +17,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
             if ($search) {
                 $query->search($search);
             }
-        })->with(['familyMembers', 'socialAssistanceRecipients']);
+        })->with(['familyMembers', 'socialAssistanceRecipients.socialAssistance']);
 
         $query->orderBy('created_at', 'DESC');
 
@@ -43,7 +43,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
 
     public function getById(string $id)
     {
-        $query = HeadOfFamily::where('id', $id)->with('familyMembers', 'socialAssistances', 'socialAssistanceRecipients');
+        $query = HeadOfFamily::where('id', $id)->with('familyMembers', 'socialAssistanceRecipients.socialAssistance');
         return $query->first();
     }
 

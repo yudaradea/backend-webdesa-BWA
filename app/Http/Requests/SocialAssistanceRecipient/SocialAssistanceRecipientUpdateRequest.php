@@ -2,10 +2,11 @@
 
 namespace App\Http\Requests\SocialAssistanceRecipient;
 
+use App\Models\SocialAssistanceRecipient;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class SocialAssistanceRecipientStoreRequest extends FormRequest
+class SocialAssistanceRecipientUpdateRequest extends FormRequest
 {
 
     /**
@@ -15,16 +16,17 @@ class SocialAssistanceRecipientStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Ambil ID dari record yang sedang di-update
+        $recipientId = $this->route('social_assistance_recipient');
         return [
             'social_assistance_id' => [
                 'required',
                 'exists:social_assistances,id',
-
-                // Cek keunikan di tabel 'social_assistance_recipients'
+                // Pastikan kombinasi social_assistance_id dan head_of_family_id unik,
+                // KECUALI untuk record yang sedang di-update
                 Rule::unique('social_assistance_recipients')->where(function ($query) {
-                    // dimana 'head_of_family_id' nya adalah ID yang sedang diinput
                     return $query->where('head_of_family_id', $this->input('head_of_family_id'));
-                }),
+                })->ignore($recipientId),
             ],
             'head_of_family_id' => 'required|exists:head_of_families,id',
             'amount' => 'required|numeric',

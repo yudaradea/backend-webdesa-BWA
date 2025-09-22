@@ -65,11 +65,11 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
             $socialAssistanceRecipient->account_number = $data['account_number'];
 
             if (isset($data['proof'])) {
-                $socialAssistanceRecipient->proof = $data['proof'];
+                $socialAssistanceRecipient->proof = $data['proof']->store('assets/social-assistance-recipients', 'public');
             }
 
             if (isset($data['status'])) {
-                $socialAssistanceRecipient->status = $data['status'];
+                $socialAssistanceRecipient->status = $data['status']->store('assets/social-assistance-recipients', 'public');
             }
 
             // Jika tidak duplikat, baru simpan data penerima
@@ -79,6 +79,64 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
 
             return $socialAssistanceRecipient;
         } catch (\Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function update(string $id, array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $socialAssistanceRecipient = $this->getById($id);
+            $socialAssistanceRecipient->social_assistance_id = $data['social_assistance_id'];
+            $socialAssistanceRecipient->head_of_family_id = $data['head_of_family_id'];
+            $socialAssistanceRecipient->amount = $data['amount'];
+            $socialAssistanceRecipient->reason = $data['reason'];
+            $socialAssistanceRecipient->bank = $data['bank'];
+            $socialAssistanceRecipient->account_number = $data['account_number'];
+
+            if (isset($data['proof'])) {
+
+                // menghapus file lama
+                if ($socialAssistanceRecipient->proof && file_exists(storage_path('app/public/' . $socialAssistanceRecipient->proof))) {
+                    unlink(storage_path('app/public/' . $socialAssistanceRecipient->proof));
+                }
+
+                $socialAssistanceRecipient->proof = $data['proof']->store('assets/social-assistance-recipients', 'public');
+            }
+
+            if (isset($data['status'])) {
+                $socialAssistanceRecipient->status = $data['status'];
+            }
+
+            $socialAssistanceRecipient->save();
+            DB::commit();
+
+            return $socialAssistanceRecipient;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function delete(string $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $socialAssistanceRecipient = $this->getById($id);
+
+            if ($socialAssistanceRecipient->proof && file_exists(storage_path('app/public/' . $socialAssistanceRecipient->proof))) {
+                unlink(storage_path('app/public/' . $socialAssistanceRecipient->proof));
+            }
+
+            $socialAssistanceRecipient->delete();
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
             DB::rollBack();
             throw new Exception($e->getMessage());
         }
