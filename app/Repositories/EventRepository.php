@@ -15,7 +15,7 @@ class EventRepository implements EventRepositoryInterfaces
             if ($search) {
                 $query->search($search);
             }
-        })->with('eventParticipants');
+        })->with('eventParticipants.headOfFamily');
 
         if ($limit) {
             $query->take($limit);
@@ -37,7 +37,7 @@ class EventRepository implements EventRepositoryInterfaces
 
     public function getById(string $id)
     {
-        $query = Event::where('id', $id)->with('eventParticipants');
+        $query = Event::where('id', $id)->with('eventParticipants.headOfFamily');
         return $query->first();
     }
 
@@ -71,7 +71,8 @@ class EventRepository implements EventRepositoryInterfaces
 
         try {
             $event = Event::find($id);
-            // jika ada perubahan thumbnail maka kita harus menghapus file lama dan menyimpan file baru
+
+            // jika ada perubahan thumbnail maka hapus file lama dan menyimpan file baru
             if (isset($data['thumbnail'])) {
                 if ($event->thumbnail && file_exists(storage_path('app/public/' . $event->thumbnail))) {
                     unlink(storage_path('app/public/' . $event->thumbnail));
@@ -103,6 +104,7 @@ class EventRepository implements EventRepositoryInterfaces
         try {
             $event = Event::find($id);
 
+            // menghapus file thumbnail jika ada
             if ($event->thumbnail && file_exists(storage_path('app/public/' . $event->thumbnail))) {
                 unlink(storage_path('app/public/' . $event->thumbnail));
             }

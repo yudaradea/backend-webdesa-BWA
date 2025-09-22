@@ -19,7 +19,7 @@ class HeadOfFamilyResource extends JsonResource
         return [
             'id' => $this->id,
             // memunculkan data dari user dengan relasi belongsTo
-            'user' => new UserResource($this->user),
+            'user' => new UserResource($this->whenLoaded('user')),
             'profile_picture' => $this->profile_picture,
             'identity_number' => $this->identity_number,
             'gender' => $this->gender,

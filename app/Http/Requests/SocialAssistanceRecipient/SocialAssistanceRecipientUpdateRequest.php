@@ -22,10 +22,11 @@ class SocialAssistanceRecipientUpdateRequest extends FormRequest
             'social_assistance_id' => [
                 'required',
                 'exists:social_assistances,id',
-                // Pastikan kombinasi social_assistance_id dan head_of_family_id unik,
+                // Pastikan field social_assistance_id dan head_of_family_id unik, agar tidak ada duplikasi penerima bantuan sosial yang sama
                 // KECUALI untuk record yang sedang di-update
                 Rule::unique('social_assistance_recipients')->where(function ($query) {
-                    return $query->where('head_of_family_id', $this->input('head_of_family_id'));
+                    return $query->where('head_of_family_id', $this->input('head_of_family_id'))
+                        ->whereNull('deleted_at');
                 })->ignore($recipientId),
             ],
             'head_of_family_id' => 'required|exists:head_of_families,id',

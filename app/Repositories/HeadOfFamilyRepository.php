@@ -17,7 +17,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
             if ($search) {
                 $query->search($search);
             }
-        })->with(['familyMembers', 'socialAssistanceRecipients.socialAssistance']);
+        })->with(['familyMembers.user', 'socialAssistanceRecipients.socialAssistance', 'user.developmentApplicants.development']);
 
         $query->orderBy('created_at', 'DESC');
 
@@ -43,7 +43,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
 
     public function getById(string $id)
     {
-        $query = HeadOfFamily::where('id', $id)->with('familyMembers', 'socialAssistanceRecipients.socialAssistance');
+        $query = HeadOfFamily::where('id', $id)->with(['familyMembers.user', 'socialAssistanceRecipients.socialAssistance', 'user.developmentApplicants.development']);
         return $query->first();
     }
 
@@ -87,6 +87,7 @@ class HeadOfFamilyRepository implements HeadOfFamilyRepositoryInterface
         try {
             $headOfFamily = HeadOfFamily::find($id);
 
+            // update foto profile jika ada
             if (isset($data['profile_picture'])) {
                 // menghapus file lama
                 if ($headOfFamily->profile_picture && file_exists(storage_path('app/public/' . $headOfFamily->profile_picture))) {

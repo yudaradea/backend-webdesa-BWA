@@ -17,7 +17,7 @@ class SocialAssistanceRepository implements SocialAssistanceRepositoryInterfaces
             if ($search) {
                 $query->search($search);
             }
-        })->with('socialAssistanceRecipients');
+        })->with('socialAssistanceRecipients.headOfFamily');
 
         if ($limit) {
 
@@ -41,7 +41,7 @@ class SocialAssistanceRepository implements SocialAssistanceRepositoryInterfaces
 
     public function getById(string $id)
     {
-        $query = SocialAssistance::where('id', $id)->with('socialAssistanceRecipients');
+        $query = SocialAssistance::where('id', $id)->with('socialAssistanceRecipients.headOfFamily');
         return $query->first();
     }
 
@@ -73,7 +73,9 @@ class SocialAssistanceRepository implements SocialAssistanceRepositoryInterfaces
     {
         DB::beginTransaction();
         try {
-            $socialAssistance = $this->getById($id);
+            $socialAssistance = SocialAssistance::find($id);
+
+            // jika ada thumbnail baru maka simpan thumbnail baru
             if (isset($data['thumbnail'])) {
                 // menghapus file lama
                 if ($socialAssistance->thumbnail && file_exists(storage_path('app/public/' . $socialAssistance->thumbnail))) {

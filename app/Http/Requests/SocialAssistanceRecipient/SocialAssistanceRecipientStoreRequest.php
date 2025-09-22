@@ -23,7 +23,8 @@ class SocialAssistanceRecipientStoreRequest extends FormRequest
                 // Cek keunikan di tabel 'social_assistance_recipients'
                 Rule::unique('social_assistance_recipients')->where(function ($query) {
                     // dimana 'head_of_family_id' nya adalah ID yang sedang diinput
-                    return $query->where('head_of_family_id', $this->input('head_of_family_id'));
+                    return $query->where('head_of_family_id', $this->input('head_of_family_id'))
+                        ->whereNull('deleted_at');
                 }),
             ],
             'head_of_family_id' => 'required|exists:head_of_families,id',

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Interfaces\SocialAssistanceRecipientRepositoryInterface;
-use App\Models\HeadOfFamily;
 use App\Models\SocialAssistanceRecipient;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +37,7 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
     ) {
         $query = $this->getAll(
             $search,
-            null,
+            $rowPerPage,
             false
         );
 
@@ -69,7 +68,7 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
             }
 
             if (isset($data['status'])) {
-                $socialAssistanceRecipient->status = $data['status']->store('assets/social-assistance-recipients', 'public');
+                $socialAssistanceRecipient->status = $data['status'];
             }
 
             // Jika tidak duplikat, baru simpan data penerima
@@ -88,7 +87,7 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
     {
         DB::beginTransaction();
         try {
-            $socialAssistanceRecipient = $this->getById($id);
+            $socialAssistanceRecipient = SocialAssistanceRecipient::find($id);
             $socialAssistanceRecipient->social_assistance_id = $data['social_assistance_id'];
             $socialAssistanceRecipient->head_of_family_id = $data['head_of_family_id'];
             $socialAssistanceRecipient->amount = $data['amount'];
@@ -96,8 +95,8 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
             $socialAssistanceRecipient->bank = $data['bank'];
             $socialAssistanceRecipient->account_number = $data['account_number'];
 
+            // update file bukti jika ada perubahan
             if (isset($data['proof'])) {
-
                 // menghapus file lama
                 if ($socialAssistanceRecipient->proof && file_exists(storage_path('app/public/' . $socialAssistanceRecipient->proof))) {
                     unlink(storage_path('app/public/' . $socialAssistanceRecipient->proof));
@@ -125,8 +124,9 @@ class SocialAssistanceRecipientRepository implements SocialAssistanceRecipientRe
         DB::beginTransaction();
 
         try {
-            $socialAssistanceRecipient = $this->getById($id);
+            $socialAssistanceRecipient = SocialAssistanceRecipient::find($id);
 
+            // Hapus file bukti jika ada
             if ($socialAssistanceRecipient->proof && file_exists(storage_path('app/public/' . $socialAssistanceRecipient->proof))) {
                 unlink(storage_path('app/public/' . $socialAssistanceRecipient->proof));
             }

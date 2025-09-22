@@ -17,7 +17,7 @@ class UserRepository implements UserRepositoryInterface
             if ($search) {
                 $query->search($search);
             }
-        });
+        })->with('developmentApplicants.development');
 
         if ($limit) {
 
@@ -41,7 +41,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getById(string $id)
     {
-        $query = User::where('id', $id);
+        $query = User::where('id', $id)->with('developmentApplicants.development');
         return $query->first();
     }
 

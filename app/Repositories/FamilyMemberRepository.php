@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\FamilyMemberRepositoryInterface;
 use App\Models\FamilyMember;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class FamilyMemberRepository implements FamilyMemberRepositoryInterface
@@ -16,7 +17,7 @@ class FamilyMemberRepository implements FamilyMemberRepositoryInterface
             if ($search) {
                 $query->search($search);
             }
-        })->with('headOfFamily');
+        })->with(['headOfFamily.user', 'user.developmentApplicants.development']);
 
         if ($limit) {
 
@@ -40,7 +41,7 @@ class FamilyMemberRepository implements FamilyMemberRepositoryInterface
 
     public function getById(string $id)
     {
-        $query = FamilyMember::where('id', $id)->with('headOfFamily');
+        $query = FamilyMember::where('id', $id)->with(['headOfFamily.user', 'user.developmentApplicants.development']);
         return $query->first();
     }
 
@@ -85,6 +86,8 @@ class FamilyMemberRepository implements FamilyMemberRepositoryInterface
         try {
             $familyMember = FamilyMember::find($id);
 
+
+            // jika ada gambar baru maka simpan
             if (isset($data['profile_picture'])) {
                 // jika ada gambar lama maka dihapus
                 if ($familyMember->profile_picture && file_exists(storage_path('app/public/' . $familyMember->profile_picture))) {
