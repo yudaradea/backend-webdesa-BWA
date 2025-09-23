@@ -6,6 +6,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventParticipantController;
 use App\Http\Controllers\FamilyMemberController;
 use App\Http\Controllers\HeadOfFamilyController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileImageController;
 use App\Http\Controllers\SocialAssistanceController;
 use App\Http\Controllers\SocialAssistanceRecipientController;
 use App\Http\Controllers\UserController;
@@ -39,3 +41,8 @@ Route::get('/development/all/paginated', [DevelopmentController::class, 'getAllP
 
 Route::apiResource('development-applicant', DevelopmentApplicantController::class);
 Route::get('/development-applicant/all/paginated', [DevelopmentApplicantController::class, 'getAllPaginated']);
+
+Route::apiResource('profile-desa', ProfileController::class);
+
+Route::apiResource('profile-desa-image', ProfileImageController::class);
+Route::get('/profile-desa-image/all/paginated', [ProfileImageController::class, 'getAllPaginated']);

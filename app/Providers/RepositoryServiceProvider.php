@@ -8,6 +8,8 @@ use App\Interfaces\EventParticipantRepositoryInterfaces;
 use App\Interfaces\EventRepositoryInterfaces;
 use App\Interfaces\FamilyMemberRepositoryInterface;
 use App\Interfaces\HeadOfFamilyRepositoryInterface;
+use App\Interfaces\ProfileImageRepositoryInterfaces;
+use App\Interfaces\ProfileRepositoryInterfaces;
 use App\Interfaces\SocialAssistanceRepositoryInterfaces;
 use App\Interfaces\SocialAssistanceRecipientRepositoryInterface;
 use App\Interfaces\UserRepositoryInterface;
@@ -17,6 +19,8 @@ use App\Repositories\EventParticipantRepository;
 use App\Repositories\EventRepository;
 use App\Repositories\FamilyMemberRepository;
 use App\Repositories\HeadOfFamilyRepository;
+use App\Repositories\ProfileImageRepository;
+use App\Repositories\ProfileRepository;
 use App\Repositories\SocialAssistanceRecipientRepository;
 use App\Repositories\SocialAssistanceRepository;
 use App\Repositories\UserRepository;
@@ -38,6 +42,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EventParticipantRepositoryInterfaces::class, EventParticipantRepository::class);
         $this->app->bind(DevelopmentRepositoryInterfaces::class, DevelopmentRepository::class);
         $this->app->bind(DevelopmentApplicantRepositoryInterfaces::class, DevelopmentApplicantRepository::class);
+        $this->app->bind(ProfileRepositoryInterfaces::class, ProfileRepository::class);
+        $this->app->bind(ProfileImageRepositoryInterfaces::class, ProfileImageRepository::class);
     }
 
     /**
