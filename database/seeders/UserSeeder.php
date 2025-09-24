@@ -21,5 +21,11 @@ class UserSeeder extends Seeder
 
         ])->assignRole('admin');
         // UserFactory::new()->count(10)->create();
+
+        User::create([
+            'name' => 'User',
+            'email' => 'user@app.com',
+            'password' => bcrypt('password'),
+        ])->assignRole('head-of-family');
     }
 }
